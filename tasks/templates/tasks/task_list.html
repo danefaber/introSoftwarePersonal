@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Task Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 0 20px;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 65%;
+        }
+
+        button {
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Task Tracker</h1>
+        <p>Add tasks and mark them complete. Your tasks are saved in a database.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="title" maxlength="200"
+                   placeholder="Enter a new task" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <h2>My Tasks</h2>
+        <ul>
+            {% for task in tasks %}
+                <li>
+                    <span class="{% if task.completed %}completed{% endif %}">
+                        {{ task.title }}
+                    </span>
+
+                    <form method="post"
+                          action="{% url 'complete_task' task.id %}"
+                          style="display:inline">
+                        {% csrf_token %}
+                        <button type="submit">
+                            {% if task.completed %}Undo{% else %}Complete{% endif %}
+                        </button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>No tasks yet. Add your first task above!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
